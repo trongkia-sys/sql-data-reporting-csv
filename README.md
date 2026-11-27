@@ -1,16 +1,12 @@
 # SQL Data Querying & Automated CSV Reporting
 
-Generate a regional sales report by querying a sample SQLite database and exporting the results to CSV. The report counts completed orders and sums their revenue by region.
+Generate a regional sales report from bundled sample data using SQLite and Python. The report counts completed orders and sums their revenue for each region.
 
-## How it works
+## Quick start
 
-1. Create an in-memory SQLite database with sample customers and orders.
-2. Join orders to customers, filter for completed orders, and group the results by region.
-3. Export the sorted query results to CSV with column headers and UTF-8 encoding with a BOM.
+Use Python 3.8 or later. The script uses only the standard library and creates an in-memory SQLite database.
 
-## Run the project
-
-Requires Python 3.8 or later with its standard library.
+Clone the repository and run these commands from a terminal. If you downloaded a ZIP from GitHub, extract it and open a terminal in the extracted folder, then run the last command.
 
 ```bash
 git clone https://github.com/trongkia-sys/sql-data-reporting-csv.git
@@ -18,7 +14,26 @@ cd sql-data-reporting-csv
 python export_report.py
 ```
 
-The resulting file is `reports/sales_by_region.csv`. Use `--output path/to/report.csv` to choose another location. Running the command again overwrites the chosen output file.
+On Windows, use `py -3` in place of `python` if needed. On macOS or Linux, use `python3` if your installation uses that command.
+
+Open the generated `reports/sales_by_region.csv` in a spreadsheet app or text editor. To choose a different destination, use `--output`:
+
+```bash
+python export_report.py --output "reports/demo/regional_sales.csv"
+```
+
+Relative output paths start from the terminal's current directory. The script creates missing output directories and overwrites an existing file at the selected path.
+
+## Repository layout
+
+| Path | Purpose |
+| --- | --- |
+| [`export_report.py`](export_report.py) | Loads the SQL files, runs the query, and writes the CSV. |
+| [`sql/sample_data.sql`](sql/sample_data.sql) | Creates the customer and order tables and inserts sample records. |
+| [`sql/sales_by_region.sql`](sql/sales_by_region.sql) | Joins customers to orders and aggregates completed sales by region. |
+| `reports/sales_by_region.csv` | Default output, generated when you run the script. |
+
+The script locates `sql/` next to `export_report.py`, even when you start it from another directory. Keep both SQL files in that folder.
 
 ## Example output
 
@@ -28,12 +43,4 @@ North,2,20000
 South,1,9000
 ```
 
-Revenue is reported in cents to preserve exact integer totals. Cancelled orders are excluded.
-
-## Source files
-
-| File | Purpose |
-| --- | --- |
-| `sql/sample_data.sql` | Defines the schema and inserts sample records. |
-| `sql/sales_by_region.sql` | Filters, aggregates, and sorts the report data. |
-| `export_report.py` | Runs the SQL and writes the CSV using Python's `sqlite3` and `csv` modules. |
+The CSV includes a header row and uses UTF-8 with a byte order mark (BOM). The query includes only regions with completed orders and sorts by revenue descending, then region name for ties. It reports revenue in integer cents to preserve exact totals.
