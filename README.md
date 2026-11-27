@@ -1,21 +1,39 @@
-# sql-data-reporting-cs# SQL Data Querying & Automated CSV Reporting
+# SQL Data Querying & Automated CSV Reporting
 
-A practical repository demonstrating SQL querying, data aggregation, and automated export of query results into `.csv` reports for spreadsheet analysis.
+Generate a regional sales report by querying a sample SQLite database and exporting the results to CSV. The report counts completed orders and sums their revenue by region.
 
-## Overview
-Designed around common Information Systems workflows—extracting structured records, summarizing metrics, and generating clean CSV outputs ready for reporting or further analysis.
+## How it works
 
-## Key Highlights
-- **SQL Querying & Aggregation:** Filtering, joining, and aggregating data (`SELECT`, `WHERE`, `GROUP BY`, `ORDER BY`, aggregate functions).
-- **Automated CSV Export:** Exporting structured query results into `.csv` files with clean headers and encoding.
-- **Readable & Maintainable Structure:** Separating SQL logic from export/execution scripts.
+1. Create an in-memory SQLite database with sample customers and orders.
+2. Join orders to customers, filter for completed orders, and group the results by region.
+3. Export the sorted query results to CSV with column headers and UTF-8 encoding with a BOM.
 
-## Technologies
-- **Database / Querying:** SQL (SQLite / MySQL / SQL Server syntax)
-- **Scripting & Export:** Python (`csv` / `sqlite3`)
-- **Tools:** Git, GitHub
+## Run the project
 
-## How to Use
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/trongkia-sys/sql-data-reporting-csv.git](https://github.com/trongkia-sys/sql-data-reporting-csv.git)
+Requires Python 3.8 or later with its standard library.
+
+```bash
+git clone https://github.com/trongkia-sys/sql-data-reporting-csv.git
+cd sql-data-reporting-csv
+python export_report.py
+```
+
+The resulting file is `reports/sales_by_region.csv`. Use `--output path/to/report.csv` to choose another location. Running the command again overwrites the chosen output file.
+
+## Example output
+
+```csv
+region,completed_orders,revenue_cents
+North,2,20000
+South,1,9000
+```
+
+Revenue is reported in cents to preserve exact integer totals. Cancelled orders are excluded.
+
+## Source files
+
+| File | Purpose |
+| --- | --- |
+| `sql/sample_data.sql` | Defines the schema and inserts sample records. |
+| `sql/sales_by_region.sql` | Filters, aggregates, and sorts the report data. |
+| `export_report.py` | Runs the SQL and writes the CSV using Python's `sqlite3` and `csv` modules. |
